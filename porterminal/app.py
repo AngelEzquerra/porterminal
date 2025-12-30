@@ -73,7 +73,7 @@ def create_app() -> FastAPI:
     app = FastAPI(
         title="Porterminal",
         description="Web-based terminal accessible from phone via Cloudflare Tunnel",
-        version="0.1.0",
+        version="0.1.1",
         lifespan=lifespan,
     )
 
@@ -146,28 +146,33 @@ def create_app() -> FastAPI:
     async def shutdown_server(request: Request):
         """Shutdown the server and tunnel.
 
-        Only allowed from localhost or authenticated Cloudflare Access users.
+        Allowed from:
+        - Localhost (direct access)
+        - Cloudflare Tunnel (cf-ray header present)
+        - Cloudflare Access authenticated users
         """
         # Check if request is from localhost
         client_host = request.client.host if request.client else None
         is_localhost = client_host in ("127.0.0.1", "::1", "localhost")
 
+        # Check for Cloudflare Tunnel (has cf-ray header)
+        is_cloudflare_tunnel = request.headers.get("cf-ray") is not None
+
         # Check for Cloudflare Access authentication
         cf_user = request.headers.get("cf-access-authenticated-user-email")
 
-        if not is_localhost and not cf_user:
+        if not is_localhost and not is_cloudflare_tunnel and not cf_user:
             logger.warning(
                 "Unauthorized shutdown attempt from %s",
                 client_host,
             )
             return JSONResponse(
-                {
-                    "error": "Unauthorized - must be localhost or authenticated via Cloudflare Access"
-                },
+                {"error": "Unauthorized - must be localhost or via Cloudflare Tunnel"},
                 status_code=403,
             )
 
-        logger.info("Shutdown requested via API by %s", cf_user or client_host)
+        source = cf_user or ("tunnel" if is_cloudflare_tunnel else client_host)
+        logger.info("Shutdown requested via API by %s", source)
 
         # Send response before shutting down
         asyncio.get_running_loop().call_later(0.5, lambda: os.kill(os.getpid(), signal.SIGTERM))

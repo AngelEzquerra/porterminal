@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2024-12-30
+
+### Fixed
+- Shutdown button now works from Cloudflare tunnel (was returning 403)
+- cloudflared PATH detection after package manager installation (Windows/Linux/macOS)
+- Duplicate text rendering when terminal screen refreshes (output buffer fix)
+- Connection state machine prevents orphaned WebSocket connections
+
+### Changed
+- Improved README with complete usage examples and options table
+- Enhanced configuration documentation with shell customization examples
+- Tab UI more compact (shows only tab number)
+
+### Added
+- Auto-detect cloudflared install location after winget/apt/brew install
+- Prompts to restart terminal if cloudflared not found in PATH after install
+
 ## [0.1.0] - 2024-12-28
 
 ### Added

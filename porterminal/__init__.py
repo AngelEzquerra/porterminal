@@ -8,7 +8,7 @@ This package provides:
 - Configuration system with shell auto-detection
 """
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 import os
 import subprocess

@@ -42,6 +42,30 @@ class CloudflaredInstaller:
             return False
 
     @staticmethod
+    def _find_cloudflared_windows() -> str | None:
+        """Find cloudflared.exe in common Windows install locations."""
+        common_paths = [
+            Path(os.environ.get("ProgramFiles", "C:\\Program Files")) / "cloudflared",
+            Path(os.environ.get("ProgramFiles(x86)", "C:\\Program Files (x86)")) / "cloudflared",
+            Path(os.environ.get("LOCALAPPDATA", "")) / "Programs" / "cloudflared",
+            Path(os.environ.get("LOCALAPPDATA", "")) / "cloudflared",
+            Path.home() / "AppData" / "Local" / "Microsoft" / "WinGet" / "Packages",
+        ]
+
+        for path in common_paths:
+            if not path.exists():
+                continue
+            # Direct exe in folder
+            exe = path / "cloudflared.exe"
+            if exe.exists():
+                return str(path)
+            # Search in subdirectories (for WinGet packages folder)
+            for exe in path.rglob("cloudflared.exe"):
+                return str(exe.parent)
+
+        return None
+
+    @staticmethod
     def _install_windows() -> bool:
         """Install cloudflared on Windows."""
         # Try winget first (preferred)
@@ -63,7 +87,20 @@ class CloudflaredInstaller:
                 )
                 if result.returncode == 0 or "already installed" in result.stdout.lower():
                     console.print("[green]✓ Installed via winget[/green]")
-                    return True
+
+                    # Try to find and add to PATH for current session
+                    install_path = CloudflaredInstaller._find_cloudflared_windows()
+                    if install_path:
+                        os.environ["PATH"] = install_path + os.pathsep + os.environ.get("PATH", "")
+                        console.print(f"[dim]Added to PATH: {install_path}[/dim]")
+                        return True
+                    else:
+                        # Couldn't find it, prompt restart
+                        console.print(
+                            "[yellow]Installed but not found in PATH.[/yellow]\n"
+                            "[yellow]Please restart your terminal and run again.[/yellow]"
+                        )
+                        return False
             except (subprocess.TimeoutExpired, OSError) as e:
                 console.print(f"[dim]winget failed: {e}[/dim]")
 
@@ -96,6 +133,24 @@ class CloudflaredInstaller:
             console.print(f"[red]Download failed: {e}[/red]")
 
         return False
+
+    @staticmethod
+    def _find_cloudflared_unix() -> str | None:
+        """Find cloudflared in common Unix install locations."""
+        common_paths = [
+            Path("/usr/bin"),
+            Path("/usr/local/bin"),
+            Path("/opt/homebrew/bin"),
+            Path.home() / ".local" / "bin",
+            Path.home() / "bin",
+        ]
+
+        for path in common_paths:
+            exe = path / "cloudflared"
+            if exe.exists() and os.access(exe, os.X_OK):
+                return str(path)
+
+        return None
 
     @staticmethod
     def _install_linux() -> bool:
@@ -142,7 +197,25 @@ class CloudflaredInstaller:
                     )
                     if result.returncode == 0:
                         console.print(f"[green]✓ Installed via {name}[/green]")
-                        return True
+
+                        # Check if now in PATH
+                        if shutil.which("cloudflared"):
+                            return True
+
+                        # Try to find and add to PATH
+                        install_path = CloudflaredInstaller._find_cloudflared_unix()
+                        if install_path:
+                            os.environ["PATH"] = (
+                                install_path + os.pathsep + os.environ.get("PATH", "")
+                            )
+                            console.print(f"[dim]Added to PATH: {install_path}[/dim]")
+                            return True
+                        else:
+                            console.print(
+                                "[yellow]Installed but not found in PATH.[/yellow]\n"
+                                "[yellow]Please restart your terminal and run again.[/yellow]"
+                            )
+                            return False
                 except (subprocess.TimeoutExpired, OSError) as e:
                     console.print(f"[dim]{name} failed: {e}[/dim]")
 
@@ -183,7 +256,23 @@ class CloudflaredInstaller:
                 )
                 if result.returncode == 0:
                     console.print("[green]✓ Installed via Homebrew[/green]")
-                    return True
+
+                    # Check if now in PATH
+                    if shutil.which("cloudflared"):
+                        return True
+
+                    # Try to find and add to PATH
+                    install_path = CloudflaredInstaller._find_cloudflared_unix()
+                    if install_path:
+                        os.environ["PATH"] = install_path + os.pathsep + os.environ.get("PATH", "")
+                        console.print(f"[dim]Added to PATH: {install_path}[/dim]")
+                        return True
+                    else:
+                        console.print(
+                            "[yellow]Installed but not found in PATH.[/yellow]\n"
+                            "[yellow]Please restart your terminal and run again.[/yellow]"
+                        )
+                        return False
             except (subprocess.TimeoutExpired, OSError) as e:
                 console.print(f"[dim]Homebrew failed: {e}[/dim]")
 
