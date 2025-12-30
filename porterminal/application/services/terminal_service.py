@@ -20,7 +20,10 @@ logger = logging.getLogger(__name__)
 # Constants
 HEARTBEAT_INTERVAL = 30  # seconds
 HEARTBEAT_TIMEOUT = 300  # 5 minutes
-PTY_READ_INTERVAL = 0.008  # ~120Hz
+PTY_READ_INTERVAL = 0.008  # ~120Hz polling
+OUTPUT_BATCH_INTERVAL = 0.016  # ~60Hz output (batch writes for smoother rendering)
+OUTPUT_BATCH_MAX_SIZE = 16384  # Flush if batch exceeds 16KB
+INTERACTIVE_THRESHOLD = 64  # Bytes - flush immediately for small interactive data
 MAX_INPUT_SIZE = 4096
 
 
@@ -100,26 +103,66 @@ class TerminalService:
         session: Session[PTYPort],
         connection: ConnectionPort,
     ) -> None:
-        """Read from PTY and send to client."""
+        """Read from PTY and send to client with output batching.
+
+        Batching strategy:
+        - Small data (<64 bytes): flush immediately for interactive responsiveness
+        - Large data: batch for ~16ms to reduce WebSocket message frequency
+        - Flush if batch exceeds 16KB to prevent memory buildup
+        """
         # Check if PTY is alive at start
         if not session.pty_handle.is_alive():
             logger.error("PTY not alive at start session_id=%s", session.id)
             await connection.send_output(b"\r\n[PTY failed to start]\r\n")
             return
 
+        batch_buffer: list[bytes] = []
+        batch_size = 0
+        last_flush_time = asyncio.get_running_loop().time()
+
+        async def flush_batch() -> None:
+            nonlocal batch_buffer, batch_size, last_flush_time
+            if batch_buffer:
+                combined = b"".join(batch_buffer)
+                batch_buffer = []
+                batch_size = 0
+                last_flush_time = asyncio.get_running_loop().time()
+                await connection.send_output(combined)
+
         while connection.is_connected() and session.pty_handle.is_alive():
             try:
                 data = session.pty_handle.read(4096)
                 if data:
                     session.add_output(data)
-                    await connection.send_output(data)
                     session.touch(datetime.now(UTC))
+
+                    # Small data (interactive): flush immediately for responsiveness
+                    if len(data) < INTERACTIVE_THRESHOLD and not batch_buffer:
+                        await connection.send_output(data)
+                    else:
+                        # Batch larger data
+                        batch_buffer.append(data)
+                        batch_size += len(data)
+
+                        # Flush if batch is large enough
+                        if batch_size >= OUTPUT_BATCH_MAX_SIZE:
+                            await flush_batch()
+
             except Exception as e:
                 logger.error("PTY read error session_id=%s: %s", session.id, e)
+                await flush_batch()  # Flush any pending data
                 await connection.send_output(f"\r\n[PTY error: {e}]\r\n".encode())
                 break
 
+            # Check if we should flush based on time
+            current_time = asyncio.get_running_loop().time()
+            if batch_buffer and (current_time - last_flush_time) >= OUTPUT_BATCH_INTERVAL:
+                await flush_batch()
+
             await asyncio.sleep(PTY_READ_INTERVAL)
+
+        # Flush any remaining data
+        await flush_batch()
 
         # Notify client if PTY died
         if connection.is_connected() and not session.pty_handle.is_alive():

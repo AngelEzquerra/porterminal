@@ -36,10 +36,20 @@ class OutputBuffer:
         """Add data to the buffer.
 
         Handles clear screen detection and size limits.
+        When clear screen is detected, only keep content AFTER the last clear sequence.
         """
-        # Clear on screen reset (business rule)
+        # Check for clear screen sequence
         if CLEAR_SCREEN_SEQUENCE in data:
+            # Clear old buffer
             self.clear()
+            # Find the LAST occurrence of clear screen and only keep content after it
+            last_clear_pos = data.rfind(CLEAR_SCREEN_SEQUENCE)
+            data_after_clear = data[last_clear_pos + len(CLEAR_SCREEN_SEQUENCE) :]
+            # Only add if there's meaningful content after clear
+            if data_after_clear:
+                self._buffer.append(data_after_clear)
+                self._size += len(data_after_clear)
+            return
 
         self._buffer.append(data)
         self._size += len(data)
