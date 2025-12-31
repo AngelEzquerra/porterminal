@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.4] - 2024-12-31
 
 ### Added
-- Text view overlay for easier text selection on mobile (triple-tap or long-press to open)
+- Text view overlay for easier text selection on mobile (via button)
 - Management WebSocket for centralized tab control
 
 ### Changed
