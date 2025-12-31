@@ -467,11 +467,13 @@ export function createTabService(
                 shellSelect.value = tab.shellId;
             }
 
-            // Focus and fit
+            // Focus and fit - use rAF to ensure CSS layout is complete
             tab.term.focus();
-            setTimeout(() => {
+            requestAnimationFrame(() => {
                 tab.fitAddon.fit();
-            }, 50);
+                // Ensure cursor is visible after switching tabs
+                tab.term.scrollToBottom();
+            });
 
             renderTabs();
 

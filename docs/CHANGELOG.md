@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.5] - 2024-12-31
+
+### Fixed
+- Cursor positioning bug on page refresh (buffer flush race condition with xterm.js layout)
+- Tab switch cursor visibility (replaced setTimeout with requestAnimationFrame)
+
+### Changed
+- README updated with installation & update instructions table
+
 ## [0.1.4] - 2024-12-31
 
 ### Added
@@ -68,7 +77,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rate limiting on WebSocket input
 - Admin privilege warnings on Windows
 
-[Unreleased]: https://github.com/lyehe/porterminal/compare/v0.1.4...HEAD
+[Unreleased]: https://github.com/lyehe/porterminal/compare/v0.1.5...HEAD
+[0.1.5]: https://github.com/lyehe/porterminal/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/lyehe/porterminal/compare/v0.1.2...v0.1.4
 [0.1.2]: https://github.com/lyehe/porterminal/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/lyehe/porterminal/compare/v0.1.0...v0.1.1

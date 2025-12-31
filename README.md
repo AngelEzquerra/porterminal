@@ -34,13 +34,23 @@ Simple, quick and dirty web terminal accessible from your phone via Cloudflare Q
 # Run without installing
 uvx ptn
 
-
-# Or install
+# Or install globally
 uv tool install ptn
 ptn
 ```
 
 Scan the QR code with your phone to connect.
+
+## Installation & Updates
+
+| Method | Install | Update |
+|--------|---------|--------|
+| **uvx** (temporary) | `uvx ptn` | `uvx -U ptn` or `uvx --refresh ptn` |
+| **uv tool** (recommended) | `uv tool install ptn` | `ptn -U` or `uv tool upgrade ptn` |
+| **pipx** | `pipx install ptn` | `ptn -U` or `pipx upgrade ptn` |
+| **pip** | `pip install ptn` | `ptn -U` or `pip install -U ptn` |
+
+When installed (`uv tool`, `pipx`, `pip`), `ptn -U` auto-detects the install method and runs the correct upgrade command.
 
 
 ## Usage

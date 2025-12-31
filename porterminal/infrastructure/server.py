@@ -137,8 +137,8 @@ def start_cloudflared(port: int) -> tuple[subprocess.Popen, str | None]:
             url = match.group(0)
             break
 
-        # Also check for errors
-        if "error" in line.lower():
+        # Also check for errors (ignore ICMP proxy warnings - harmless)
+        if "error" in line.lower() and "icmp" not in line.lower():
             console.print(f"[red]Cloudflared error:[/red] {line.strip()}")
 
     return process, url

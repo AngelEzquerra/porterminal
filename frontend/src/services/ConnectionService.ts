@@ -203,30 +203,38 @@ export function createConnectionService(
                 }, config.heartbeatMs);
 
                 // Fit terminal after layout, then mark connected
+                // Use two rAF frames: first for fit + resize, second for buffer flush
+                // This ensures xterm.js has time to complete layout before we write buffered data
                 requestAnimationFrame(() => {
                     if (state.state !== 'connecting') return;
 
-                    try {
-                        tab.fitAddon.fit();
-                        // Send resize IMMEDIATELY after fit, before flushing buffer.
-                        // This ensures server knows current dimensions before we render
-                        // buffered output that may have wrong cursor position.
-                        // Bypass the debounced scheduleResize to avoid race condition.
-                        if (tab.ws?.readyState === WebSocket.OPEN) {
-                            tab.ws.send(JSON.stringify({
-                                type: 'resize',
-                                cols: tab.term.cols,
-                                rows: tab.term.rows,
-                            }));
-                        }
-                    } finally {
+                    tab.fitAddon.fit();
+                    // Send resize IMMEDIATELY after fit, before flushing buffer.
+                    // This ensures server knows current dimensions before we render
+                    // buffered output that may have wrong cursor position.
+                    if (tab.ws?.readyState === WebSocket.OPEN) {
+                        tab.ws.send(JSON.stringify({
+                            type: 'resize',
+                            cols: tab.term.cols,
+                            rows: tab.term.rows,
+                        }));
+                    }
+
+                    // Second rAF: give xterm.js a full frame to complete layout
+                    requestAnimationFrame(() => {
+                        if (state.state !== 'connecting') return;
+
                         state.state = 'connected';
                         // Flush buffered data
-                        for (const text of state.earlyBuffer) {
-                            tab.term.write(text);
+                        if (state.earlyBuffer.length > 0) {
+                            const combined = state.earlyBuffer.join('');
+                            state.earlyBuffer = [];
+                            tab.term.write(combined, () => {
+                                // After buffer is written, ensure cursor is visible
+                                tab.term.scrollToBottom();
+                            });
                         }
-                        state.earlyBuffer = [];
-                    }
+                    });
                 });
             };
 
