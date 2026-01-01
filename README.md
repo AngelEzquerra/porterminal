@@ -55,14 +55,20 @@ So I built Porterminal. A mobile-first web terminal with secure tunneling, no re
 | **pipx** | `pipx install ptn` | `pipx upgrade ptn` |
 | **pip** | `pip install ptn` | `pip install -U ptn` |
 
-> Don't have uv? Install it:
-> ```bash
-> # Linux/macOS
-> wget -qO- https://astral.sh/uv/install.sh | sh
->
-> # Windows
-> powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-> ```
+<details>
+<summary>Don't have uv? Install it</summary>
+
+Linux/macOS:
+```bash
+wget -qO- https://astral.sh/uv/install.sh | sh
+```
+
+Windows:
+```powershell
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+</details>
 
 Requires Python 3.12+ and [cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/) (auto-installed if missing).
 
