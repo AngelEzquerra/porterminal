@@ -59,12 +59,10 @@ export interface TabService {
 
 /**
  * Configure textarea for mobile devices
+ * Note: iOS keyboard suggestions cannot be fully disabled for web-based terminals.
+ * This is a limitation of xterm.js + Safari - native iOS apps can use UIKeyInput to bypass this.
  */
 function configureTerminalTextarea(textarea: HTMLTextAreaElement): void {
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-
-    textarea.setAttribute('type', 'text');
-    textarea.setAttribute('name', 'xterm');
     textarea.setAttribute('inputmode', 'text');
     textarea.setAttribute('enterkeyhint', 'send');
     textarea.setAttribute('role', 'textbox');
@@ -72,19 +70,14 @@ function configureTerminalTextarea(textarea: HTMLTextAreaElement): void {
     textarea.setAttribute('aria-multiline', 'false');
     textarea.removeAttribute('aria-hidden');
 
-    if (isIOS) {
-        // iOS: Enable predictive text suggestions
-        textarea.removeAttribute('autocomplete');
-        textarea.setAttribute('autocorrect', 'on');
-        textarea.setAttribute('autocapitalize', 'sentences');
-        textarea.removeAttribute('spellcheck');
-    } else {
-        // Other platforms: Disable autocomplete to avoid interference
-        textarea.setAttribute('autocomplete', 'off');
-        textarea.setAttribute('autocorrect', 'off');
-        textarea.setAttribute('autocapitalize', 'none');
-        textarea.setAttribute('spellcheck', 'false');
-    }
+    // Attempt to disable autocomplete/autocorrect (limited effectiveness on iOS)
+    textarea.setAttribute('autocomplete', 'off');
+    textarea.setAttribute('autocorrect', 'off');
+    textarea.setAttribute('autocapitalize', 'none');
+    textarea.setAttribute('spellcheck', 'false');
+
+    // Safari 18+: disable inline predictive text
+    textarea.setAttribute('writingsuggestions', 'false');
 
     // Prevent password managers from interfering
     textarea.setAttribute('data-form-type', 'other');
@@ -93,7 +86,6 @@ function configureTerminalTextarea(textarea: HTMLTextAreaElement): void {
     textarea.setAttribute('data-bwignore', 'true');
     textarea.setAttribute('data-protonpass-ignore', 'true');
     textarea.setAttribute('data-dashlane-ignore', 'true');
-    textarea.style.setProperty('-webkit-text-security', 'none', 'important');
 }
 
 /**
