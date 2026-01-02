@@ -20,7 +20,8 @@ DEFAULT_GLOBAL_CONFIG = """\
 # This file is auto-generated on first run.
 
 # Auto-update: check for new versions and update automatically (uvx only)
-auto_update: true
+# Set to true to enable: ptn will update itself when a new version is available
+auto_update: false
 """
 
 
@@ -33,16 +34,16 @@ def _get_auto_update_setting() -> bool:
             CONFIG_FILE.write_text(DEFAULT_GLOBAL_CONFIG)
         except Exception:
             pass
-        return True  # Default to enabled
+        return False  # Default to disabled
 
     # Read config
     try:
         import yaml
 
         data = yaml.safe_load(CONFIG_FILE.read_text()) or {}
-        return data.get("auto_update", True)
+        return data.get("auto_update", False)
     except Exception:
-        return True  # Default to enabled on error
+        return False  # Default to disabled on error
 
 
 def _get_current_version() -> str:

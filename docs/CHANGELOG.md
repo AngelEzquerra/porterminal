@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.2.4] - 2025-01-02
 
 ### Added
-- `auto_update` option in `~/.ptn/ptn.yaml` (enabled by default)
+- `auto_update` option in `~/.ptn/ptn.yaml` (disabled by default)
 - Global config auto-generated on first run
 
 ## [0.2.3] - 2025-01-02
