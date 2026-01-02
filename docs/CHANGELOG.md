@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.8] - 2025-01-01
+
+### Fixed
+- iOS keyboard improvements: `enterkeyhint="send"` for Send button
+- Safari 18+ inline prediction control via `writingsuggestions="false"`
+- Restored iOS backspace fix (beforeinput handler for delete key)
+
+### Changed
+- Cleaned up stale frontend assets
+
+## [0.1.7] - 2025-01-01
+
+### Changed
+- README updated with uv installation instructions
+- Fixed PyPI package name references in documentation
+
+## [0.1.6] - 2025-01-01
+
+### Changed
+- Streamlined versioning with `hatch-vcs` (git tag-based, single source of truth)
+- Removed hardcoded version strings from multiple files
+
+### Fixed
+- CI workflow for master branch and correct CLI command
+
 ## [0.1.5] - 2024-12-31
 
 ### Fixed
@@ -77,7 +102,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rate limiting on WebSocket input
 - Admin privilege warnings on Windows
 
-[Unreleased]: https://github.com/lyehe/porterminal/compare/v0.1.5...HEAD
+[Unreleased]: https://github.com/lyehe/porterminal/compare/v0.1.8...HEAD
+[0.1.8]: https://github.com/lyehe/porterminal/compare/v0.1.7...v0.1.8
+[0.1.7]: https://github.com/lyehe/porterminal/compare/v0.1.6...v0.1.7
+[0.1.6]: https://github.com/lyehe/porterminal/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/lyehe/porterminal/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/lyehe/porterminal/compare/v0.1.2...v0.1.4
 [0.1.2]: https://github.com/lyehe/porterminal/compare/v0.1.1...v0.1.2

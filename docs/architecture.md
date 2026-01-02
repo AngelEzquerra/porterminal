@@ -1,38 +1,43 @@
 # Architecture
 
+Porterminal uses hexagonal (ports & adapters) architecture for clean separation of concerns.
+
 ## Project Structure
 
 ```
 porterminal/
 ├── __init__.py           # Entry point: server + tunnel + QR code
-├── app.py                # FastAPI application with WebSocket endpoint
-├── session.py            # Session registry with reconnection support
+├── app.py                # FastAPI application factory
 ├── config.py             # Configuration loading (Pydantic)
-├── logging_setup.py      # Logging configuration
-├── updater.py            # Version update checking
-├── websocket/
-│   ├── handler.py        # Main WebSocket handler with heartbeat
-│   ├── handlers.py       # Message type handlers (resize, input, ping)
-│   ├── buffer.py         # Output batching for efficient transfer
-│   └── rate_limiter.py   # Token bucket rate limiting
-├── pty/
-│   ├── manager.py        # Secure PTY manager
-│   ├── windows.py        # Windows backend (pywinpty)
-│   ├── unix.py           # Unix backend (pty module)
-│   ├── env.py            # Environment sanitization
-│   └── protocol.py       # PTY backend protocol
-├── cli/
+├── domain/               # Core business logic (no dependencies)
+│   ├── entities/         # Session, OutputBuffer
+│   ├── values/           # SessionId, TerminalDimensions, etc.
+│   ├── services/         # RateLimiter, EnvironmentSanitizer
+│   └── ports/            # Interfaces (PtyPort, SessionRepository)
+├── application/          # Use cases
+│   ├── services/         # TerminalService, SessionService
+│   └── ports/            # ConfigPort, ConnectionPort
+├── infrastructure/       # External adapters
+│   ├── web/              # WebSocket adapter
+│   ├── repositories/     # InMemorySessionRepository
+│   ├── config/           # YAML loader, shell detection
+│   ├── cloudflared.py    # Tunnel management
+│   └── server.py         # Uvicorn wrapper
+├── pty/                  # Platform-specific PTY
+│   ├── windows.py        # pywinpty backend
+│   └── unix.py           # pty module backend
+├── cli/                  # CLI interface
 │   ├── args.py           # Argument parsing
-│   └── display.py        # Startup screen display
-├── infrastructure/
-│   ├── server.py         # Uvicorn server management
-│   ├── network.py        # Port/IP utilities
-│   └── cloudflared.py    # Tunnel management
-└── static/
-    ├── index.html        # Mobile-optimized terminal UI
-    ├── app.js            # Terminal client (xterm.js)
-    ├── style.css         # VSCode-inspired styling
-    └── sw.js             # Service worker for offline caching
+│   └── display.py        # Startup screen
+└── static/               # Built frontend (TypeScript/Vite)
+
+frontend/                 # Source frontend
+├── src/
+│   ├── services/         # ConnectionService, TabService
+│   ├── input/            # KeyMapper, InputHandler
+│   ├── gestures/         # Touch handling
+│   └── ui/               # UI components
+└── index.html
 ```
 
 ## Data Flow
@@ -41,7 +46,7 @@ porterminal/
 ┌──────────────────────────────────────────────────────────────┐
 │                         Client                               │
 │  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐      │
-│  │   xterm.js  │◀──▶│  WebSocket  │◀──▶│   app.js    │      │
+│  │   xterm.js  │◀──▶│  WebSocket  │◀──▶│  Frontend   │      │
 │  └─────────────┘    └─────────────┘    └─────────────┘      │
 └──────────────────────────────────────────────────────────────┘
                               │
@@ -54,8 +59,8 @@ porterminal/
 ┌──────────────────────────────────────────────────────────────┐
 │                         Server                               │
 │  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐      │
-│  │   FastAPI   │◀──▶│   Session   │◀──▶│     PTY     │      │
-│  │  WebSocket  │    │   Manager   │    │   Backend   │      │
+│  │   FastAPI   │◀──▶│  Terminal   │◀──▶│     PTY     │      │
+│  │  WebSocket  │    │   Service   │    │   Backend   │      │
 │  └─────────────┘    └─────────────┘    └─────────────┘      │
 └──────────────────────────────────────────────────────────────┘
 ```
@@ -115,7 +120,7 @@ Blocked patterns:
 - `*_KEY`, `*_SECRET`, `*_TOKEN`, `*_PASSWORD`
 - `AWS_*`, `AZURE_*`, `GCP_*`
 - `GITHUB_*`, `OPENAI_*`, `ANTHROPIC_*`
-- And more (see `pty/env.py`)
+- And more (see `domain/services/`)
 
 ### Session Isolation
 

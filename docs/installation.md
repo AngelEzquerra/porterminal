@@ -1,35 +1,20 @@
 # Installation
 
-## Quick Install
+## Quick Start
 
-**One-liner (installs uv automatically if needed):**
-
-```powershell
-# Windows (PowerShell)
-powershell -ExecutionPolicy ByPass -c "irm https://raw.githubusercontent.com/lyehe/porterminal/main/install.ps1 | iex"
-```
-
+**Run without installing:**
 ```bash
-# macOS/Linux
-curl -LsSf https://raw.githubusercontent.com/lyehe/porterminal/main/install.sh | sh
+uvx ptn
 ```
 
 ## Package Managers
 
-**pip:**
-```bash
-pip install porterminal
-```
-
-**uv:**
-```bash
-uv tool install porterminal
-```
-
-**Run without installing:**
-```bash
-uvx porterminal
-```
+| Method | Install | Update |
+|--------|---------|--------|
+| **uvx** (no install) | `uvx ptn` | `uvx --refresh ptn` |
+| **uv tool** | `uv tool install ptn` | `uv tool upgrade ptn` |
+| **pipx** | `pipx install ptn` | `pipx upgrade ptn` |
+| **pip** | `pip install ptn` | `pip install -U ptn` |
 
 ## From Source
 
@@ -37,7 +22,7 @@ uvx porterminal
 git clone https://github.com/lyehe/porterminal.git
 cd porterminal
 uv sync
-uv run porterminal
+uv run ptn
 ```
 
 ## Prerequisites
@@ -69,17 +54,18 @@ sudo dpkg -i cloudflared.deb
 ## Verify Installation
 
 ```bash
-porterminal --help
+ptn --help
 ```
 
 Expected output:
 ```
-usage: porterminal [path] [options]
+usage: ptn [path] [options]
 
 Arguments:
   path              Starting directory for the shell
 
 Options:
   --no-tunnel       Start server only, without Cloudflare tunnel
+  -b, --background  Run in background
   -v, --verbose     Show detailed startup logs
 ```

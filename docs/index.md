@@ -27,7 +27,7 @@ Porterminal provides a mobile-friendly terminal interface that you can access fr
 
 ## How It Works
 
-1. **Start** - Run `porterminal` from your terminal
+1. **Start** - Run `ptn` from your terminal
 2. **Connect** - Scan the QR code with your phone
 3. **Use** - Full terminal access with touch-friendly controls
 

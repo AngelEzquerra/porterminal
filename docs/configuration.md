@@ -112,3 +112,4 @@ This enables:
 |----------|-------------|
 | `PORTERMINAL_LOG_LEVEL` | Log level (DEBUG, INFO, WARNING, ERROR) |
 | `PORTERMINAL_CWD` | Override working directory |
+| `PORTERMINAL_CONFIG_PATH` | Path to config file (default: config.yaml) |
