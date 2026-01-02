@@ -61,6 +61,11 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Run in background and return immediately",
     )
+    parser.add_argument(
+        "--init",
+        action="store_true",
+        help="Create .ptn/ptn.yaml config file in current directory",
+    )
     # Internal argument for background mode communication
     parser.add_argument(
         "--_url-file",
@@ -88,4 +93,49 @@ def parse_args() -> argparse.Namespace:
         success = update_package()
         sys.exit(0 if success else 1)
 
+    if args.init:
+        _init_config()
+        sys.exit(0)
+
     return args
+
+
+DEFAULT_CONFIG = """\
+# ptn configuration file
+# Docs: https://github.com/lyehe/porterminal/blob/master/docs/configuration.md
+
+# Custom buttons (appear in third toolbar row)
+buttons:
+  - label: "git"
+    send: "git status\\r"
+  - label: "build"
+    send: "npm run build\\r"
+  # Multi-step button with delays (ms):
+  # - label: "deploy"
+  #   send:
+  #     - "npm run build"
+  #     - 100
+  #     - "\\r"
+
+# Terminal settings (optional)
+# terminal:
+#   default_shell: bash
+#   cols: 120
+#   rows: 30
+"""
+
+
+def _init_config() -> None:
+    """Create .ptn/ptn.yaml in current directory."""
+    from pathlib import Path
+
+    config_dir = Path.cwd() / ".ptn"
+    config_file = config_dir / "ptn.yaml"
+
+    if config_file.exists():
+        print(f"Config already exists: {config_file}")
+        return
+
+    config_dir.mkdir(exist_ok=True)
+    config_file.write_text(DEFAULT_CONFIG)
+    print(f"Created: {config_file}")

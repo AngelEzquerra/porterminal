@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.3] - 2025-01-02
+
+### Added
+- `--init` flag to create `.ptn/ptn.yaml` config in current directory
+
 ## [0.2.2] - 2025-01-02
 
 ### Added
@@ -136,7 +141,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rate limiting on WebSocket input
 - Admin privilege warnings on Windows
 
-[Unreleased]: https://github.com/lyehe/porterminal/compare/v0.2.2...HEAD
+[Unreleased]: https://github.com/lyehe/porterminal/compare/v0.2.3...HEAD
+[0.2.3]: https://github.com/lyehe/porterminal/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/lyehe/porterminal/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/lyehe/porterminal/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/lyehe/porterminal/compare/v0.1.8...v0.2.0
