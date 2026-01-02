@@ -97,8 +97,21 @@ class TerminalService:
             del self._session_connections[session_id]
         return count
 
-    async def _send_to_connections(self, connections: list[ConnectionPort], data: bytes) -> None:
+    async def _send_to_connections(
+        self, connections: list[ConnectionPort], data: bytes, session_id: str = ""
+    ) -> None:
         """Send data to a list of connections (used with pre-snapshotted list)."""
+        conn_count = len(connections)
+        if conn_count > 1:
+            # Get connection IDs for debugging
+            conn_ids = [getattr(conn, "connection_id", id(conn)) for conn in connections]
+            logger.warning(
+                "Broadcasting to %d connections session_id=%s conn_ids=%s data_len=%d",
+                conn_count,
+                session_id,
+                conn_ids,
+                len(data),
+            )
         for conn in connections:
             try:
                 await conn.send_output(data)
@@ -164,13 +177,15 @@ class TerminalService:
         # - Only one read loop starts per session (prevents duplicate PTY reads)
         # - I/O (send_output) happens OUTSIDE lock to avoid blocking other clients
         buffered = None
+        conn_id = getattr(connection, "connection_id", id(connection))
         async with lock:
             connection_count = self._register_connection(session_id, connection)
             is_first_client = connection_count == 1
 
             logger.info(
-                "Client connected session_id=%s connection_count=%d",
+                "Client connected session_id=%s conn_id=%s connection_count=%d",
                 session_id,
+                conn_id,
                 connection_count,
             )
 
@@ -203,8 +218,9 @@ class TerminalService:
             remaining = self._unregister_connection(session_id, connection)
 
             logger.info(
-                "Client disconnected session_id=%s remaining_connections=%d",
+                "Client disconnected session_id=%s conn_id=%s remaining_connections=%d",
                 session_id,
+                conn_id,
                 remaining,
             )
 
@@ -220,11 +236,17 @@ class TerminalService:
     ) -> None:
         """Start the PTY read loop that broadcasts to all clients."""
         if session_id in self._session_read_tasks:
+            existing_task = self._session_read_tasks[session_id]
+            logger.warning(
+                "Read loop already exists session_id=%s task_done=%s",
+                session_id,
+                existing_task.done() if existing_task else "N/A",
+            )
             return  # Already running
 
         task = asyncio.create_task(self._read_pty_broadcast_loop(session, session_id))
         self._session_read_tasks[session_id] = task
-        logger.debug("Started broadcast read loop session_id=%s", session_id)
+        logger.info("Started broadcast read loop session_id=%s", session_id)
 
     async def _stop_broadcast_read_loop(self, session_id: str) -> None:
         """Stop the PTY read loop for a session."""
@@ -282,7 +304,7 @@ class TerminalService:
                 connections = list(self._session_connections.get(session_id, set()))
 
             # Broadcast outside lock (I/O can be slow)
-            await self._send_to_connections(connections, combined)
+            await self._send_to_connections(connections, combined, session_id)
 
         def has_connections() -> bool:
             return (
@@ -303,7 +325,7 @@ class TerminalService:
                             session.add_output(data)
                             connections = list(self._session_connections.get(session_id, set()))
                         # Broadcast outside lock
-                        await self._send_to_connections(connections, data)
+                        await self._send_to_connections(connections, data, session_id)
                     else:
                         # Batch larger data
                         batch_buffer.append(data)
