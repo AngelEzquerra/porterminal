@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.2] - 2025-01-02
+
+### Added
+- Auto-update: checks PyPI daily and updates via `uvx --refresh` if newer version available
+
 ## [0.2.1] - 2025-01-02
 
 ### Added
@@ -131,7 +136,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rate limiting on WebSocket input
 - Admin privilege warnings on Windows
 
-[Unreleased]: https://github.com/lyehe/porterminal/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/lyehe/porterminal/compare/v0.2.2...HEAD
+[0.2.2]: https://github.com/lyehe/porterminal/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/lyehe/porterminal/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/lyehe/porterminal/compare/v0.1.8...v0.2.0
 [0.1.8]: https://github.com/lyehe/porterminal/compare/v0.1.7...v0.1.8
