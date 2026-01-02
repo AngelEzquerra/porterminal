@@ -37,6 +37,24 @@ uv build
 uv publish
 ```
 
+## Release Process
+
+Versioning uses `hatch-vcs` - version is derived from git tags (single source of truth).
+
+**To create a release:**
+```bash
+git tag v0.1.9 -m "Release v0.1.9"
+git push origin v0.1.9
+```
+
+**Automation chain:**
+1. Tag push triggers `.github/workflows/release.yml`
+2. GitHub Release is auto-created with generated release notes
+3. Release triggers `.github/workflows/publish.yml`
+4. Package is built and published to PyPI via trusted publishing (OIDC)
+
+No manual steps required after pushing the tag.
+
 ## Architecture
 
 Hexagonal architecture with clear separation of concerns.
