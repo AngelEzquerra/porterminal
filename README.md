@@ -73,10 +73,13 @@ Run `ptn --init` to create a starter config, or create `ptn.yaml` manually:
 
 ```yaml
 buttons:
-  - label: "git"
-    send: "git status\r"
-  - label: "build"
-    send: "npm run build\r"
+  - label: "claude"
+    send:
+      - "claude"
+      - 100        # delay in ms
+      - "\r"
+  - label: "tmux"
+    send: "tmux\r"
 ```
 
 Config is searched in order: `$PORTERMINAL_CONFIG_PATH`, `./ptn.yaml`, `./.ptn/ptn.yaml`, `~/.ptn/ptn.yaml`.
