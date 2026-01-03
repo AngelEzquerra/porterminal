@@ -36,7 +36,7 @@ So I built something simpler: **run a command, scan a QR, start typing.**
 
 - **One command, instant access** - No SSH, no port forwarding, no config files. Cloudflare tunnel + QR code.
 - **Actually usable on mobile** - Essential buttons and gestures for everyday terminal use.
-- **Multi-tab shared sessions** - Run builds in one tab, tail logs in another. Sessions persist across reconnects.
+- **Multi-tab shared sessions** - Run builds in one tab, tail logs in another. Sessions and tabs persist across reconnects.
 - **Cross-platform** - Windows (PowerShell, CMD, WSL), Linux/macOS (Bash, Zsh, Fish). Auto-detects your shells.
 
 ## Install
