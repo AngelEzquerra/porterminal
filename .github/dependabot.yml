@@ -35,7 +35,16 @@ updates:
       npm-minor:
         patterns:
           - "*"
+        exclude-patterns:
+          - "@xterm/*"
         update-types:
+          - "minor"
+          - "patch"
+      xterm:
+        patterns:
+          - "@xterm/*"
+        update-types:
+          - "major"
           - "minor"
           - "patch"
     open-pull-requests-limit: 5
