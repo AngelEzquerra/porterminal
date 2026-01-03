@@ -2,10 +2,10 @@
 
 ## Development Workflow
 
-1. Create feature branch from `dev`:
+1. Create feature branch from `master`:
    ```bash
-   git checkout dev
-   git pull origin dev
+   git checkout master
+   git pull origin master
    git checkout -b feature/your-feature
    ```
 
