@@ -74,6 +74,7 @@ class ShellDetector:
             ("Bash", "bash", "bash", ["--login"]),
             ("Zsh", "zsh", "zsh", ["--login"]),
             ("Fish", "fish", "fish", []),
+            ("Nushell", "nushell", "nu", []),
             ("Sh", "sh", "sh", []),
         ]
 
@@ -411,7 +412,7 @@ class ShellDetector:
         if not shell_path:
             return None
 
-        # Extract shell name from path (e.g., /usr/bin/fish -> fish)
+        # Extract shell name from path (e.g., /usr/bin/ -> fish)
         shell_name = Path(shell_path).name.lower()
 
         # Map common shell names to IDs
@@ -419,6 +420,7 @@ class ShellDetector:
             "bash": "bash",
             "zsh": "zsh",
             "fish": "fish",
+            "nu": "nushell",
             "sh": "sh",
         }
 

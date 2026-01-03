@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Nushell support** - Add nushell support (tested on macOS only, but should work on other platforms as well)
+
 ## [0.3.2] - 2026-01-03
 
 ### Fixed

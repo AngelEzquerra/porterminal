@@ -53,7 +53,7 @@ server:
 Porterminal automatically detects available shells:
 
 - **Windows**: PowerShell, CMD, WSL (if installed)
-- **Unix**: bash, zsh, sh
+- **Unix**: bash, zsh, fish, nushell, sh
 
 ### Custom Shells
 

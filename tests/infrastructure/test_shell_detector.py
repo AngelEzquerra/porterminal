@@ -188,6 +188,16 @@ class TestShellDetector:
         assert result == "fish"
 
     @pytest.mark.skipif(sys.platform == "win32", reason="Unix-only test")
+    def test_get_user_shell_id_returns_nushell(self, monkeypatch):
+        """Test that $SHELL=/opt/homebrew/bin/nu returns 'nushell'."""
+        monkeypatch.setenv("SHELL", "/opt/homebrew/bin/nu")
+        detector = ShellDetector()
+
+        result = detector._get_user_shell_id()
+
+        assert result == "nushell"
+
+    @pytest.mark.skipif(sys.platform == "win32", reason="Unix-only test")
     def test_get_user_shell_id_returns_zsh(self, monkeypatch):
         """Test that $SHELL=/bin/zsh returns 'zsh'."""
         monkeypatch.setenv("SHELL", "/bin/zsh")
@@ -260,6 +270,20 @@ class TestShellDetector:
         shell_ids = [s.id for s in shells]
 
         assert "fish" in shell_ids
+
+    @pytest.mark.skipif(sys.platform == "win32", reason="Unix-only test")
+    def test_nushell_detected_when_installed(self):
+        """Test that nushell is detected when installed on system."""
+        import shutil
+
+        if not shutil.which("nu"):
+            pytest.skip("nushell not installed")
+
+        detector = ShellDetector()
+        shells = detector.detect_shells()
+        shell_ids = [s.id for s in shells]
+
+        assert "nushell" in shell_ids
 
     @pytest.mark.skipif(sys.platform == "win32", reason="Unix-only test")
     def test_default_shell_respects_shell_env(self, monkeypatch):
