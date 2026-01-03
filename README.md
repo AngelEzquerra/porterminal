@@ -28,7 +28,9 @@
 
 I wanted to vibe code from bed.
 
-**ngrok** requires registration and the free tier sucks. **Cloudflare Quick Tunnel** works great but is hard to use directly on the phone. **Termius** works after complicated setup: port forwarding, firewall rules, key management... Also tried **Happy**, but too bulky and updates lag behind. I just wanted something simpler: **run a command, scan a QR, start typing.**
+**ngrok** requires registration and the free tier sucks. **Cloudflare Quick Tunnel** works great but is hard to use directly on the phone. **Termius** works after complicated setup: port forwarding, firewall rules, key management... Also tried **Happy**, but too bulky and updates lag behind.
+
+So I built something simpler: **run a command, scan a QR, start typing.**
 
 ## Features
 
