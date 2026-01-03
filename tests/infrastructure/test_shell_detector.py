@@ -246,3 +246,17 @@ class TestShellDetector:
         result = detector._get_linux_default()
 
         assert result == "fish"
+
+    @pytest.mark.skipif(sys.platform == "win32", reason="Unix-only test")
+    def test_fish_detected_when_installed(self):
+        """Test that fish shell is detected when installed on system."""
+        import shutil
+
+        if not shutil.which("fish"):
+            pytest.skip("fish not installed")
+
+        detector = ShellDetector()
+        shells = detector.detect_shells()
+        shell_ids = [s.id for s in shells]
+
+        assert "fish" in shell_ids

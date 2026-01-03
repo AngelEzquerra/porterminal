@@ -31,6 +31,34 @@ jobs:
       - name: Check formatting
         run: uv run ruff format --check .
 
+  test:
+    name: Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install fish shell (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt-get update && sudo apt-get install -y fish
+
+      - name: Install fish shell (macOS)
+        if: matrix.os == 'macos-latest'
+        run: brew install fish
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync
+
       - name: Run tests
         run: uv run pytest
 
