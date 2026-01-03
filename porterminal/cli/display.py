@@ -136,7 +136,7 @@ def display_startup_screen(
         *tagline_colored,
         "",
         f"[bold yellow]{get_caution()}[/bold yellow]",
-        "[dim]Use -p for password protection if your screen is exposed[/dim]",
+        "[bright_red]Use -p for password protection if your screen is exposed[/bright_red]",
         status,
         f"[bold cyan]{url}[/bold cyan]",
     ]
