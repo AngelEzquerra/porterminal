@@ -7,16 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.5] - 2026-01-02
+
 ### Added
 - Update settings in shared config (`ptn.yaml`):
   - `update.notify_on_startup`: enable/disable startup notification (default: true)
   - `update.check_interval`: seconds between PyPI checks (default: 86400 = 24h)
+- Test infrastructure for domain, application, and infrastructure layers
 
 ### Changed
 - Consolidated update system: merged `update_checker.py` into `updater.py` (~260 lines removed)
 - Fixed execution order: CLI args now parsed before update check (flags always work)
 - Single cache location: `~/.ptn/update_check.json`
 - Notification-only updates: no more auto-exec, just prints message
+- Improved server/tunnel exit messages (cleaner shutdown feedback)
 
 ### Fixed
 - Version comparison now handles `0.9` vs `0.10` correctly (was using string compare)
@@ -168,7 +172,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rate limiting on WebSocket input
 - Admin privilege warnings on Windows
 
-[Unreleased]: https://github.com/lyehe/porterminal/compare/v0.2.4...HEAD
+[Unreleased]: https://github.com/lyehe/porterminal/compare/v0.2.5...HEAD
+[0.2.5]: https://github.com/lyehe/porterminal/compare/v0.2.4...v0.2.5
 [0.2.4]: https://github.com/lyehe/porterminal/compare/v0.2.3...v0.2.4
 [0.2.3]: https://github.com/lyehe/porterminal/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/lyehe/porterminal/compare/v0.2.1...v0.2.2
