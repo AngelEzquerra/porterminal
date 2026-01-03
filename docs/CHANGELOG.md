@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.7] - 2026-01-03
+
+### Fixed
+- Cloudflared auto-install now works on Linux Mint and other Ubuntu derivatives
+- Uses Cloudflare's "any" distribution instead of codename detection (fixes [#11](https://github.com/lyehe/porterminal/issues/11))
+
 ## [0.2.6] - 2026-01-03
 
 ### Added
