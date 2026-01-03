@@ -38,7 +38,6 @@ So I built something simpler: **run a command, scan a QR, start typing.**
 - **Actually usable on mobile** - Essential buttons and gestures for everyday terminal use.
 - **Multi-tab shared sessions** - Run builds in one tab, tail logs in another. Sessions persist across reconnects.
 - **Cross-platform** - Windows (PowerShell, CMD, WSL), Linux/macOS (Bash, Zsh, Fish). Auto-detects your shells.
-- **Update notifications** - Checks PyPI daily, notifies on startup if update available. Run `ptn -U` to update.
 
 ## Install
 
