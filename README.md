@@ -28,7 +28,7 @@
 
 I wanted to vibe code from bed.
 
-**ngrok** requires registration and the free tier sucks. **Cloudflare Quick Tunnel** works great but is hard to use directly on the phone. **Termius** works after complicated setup: port forwarding, firewall rules, key management... Tried **Claude Code web**, but I can't use my hardware and environments. Also tried **Happy**, but too bulky and updates lag behind.
+**ngrok** requires registration and the free tier sucks. **Cloudflare Quick Tunnel** works great but is hard to use directly on the phone. **Termius** requires complicated setup: port forwarding, firewall rules, key management... Tried **Claude Code web**, but it can't access my local hardware and environment. Also tried **Happy**, but it's too bulky and updates lag behind.
 
 So I built something simpler: **run a command, scan a QR, start typing.**
 
